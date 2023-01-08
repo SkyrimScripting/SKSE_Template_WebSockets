@@ -12,9 +12,9 @@ typedef WebSocketServer::message_handler WebSocketMessageHandler;
 
 WebSocketServer _webSocketServer;
 
-void RunConsoleCommand(std::string commandText) {
+void RunConsoleCommand(const std::string &commandText) {
     auto *script = RE::IFormFactory::GetConcreteFormFactoryByType<RE::Script>()->Create();
-    script->SetCommand(commandText.c_str());
+    script->SetCommand(commandText);
     script->CompileAndRun(RE::PlayerCharacter::GetSingleton());
 }
 
@@ -25,11 +25,7 @@ void RunWebSocketServer() {
             logger::info("WebSocket message '{}'", messageText);
             _webSocketServer.send(connection, std::format("Running command '{}'", messageText),
                                   websocketpp::frame::opcode::text);
-            try {
-                RunConsoleCommand(messageText);
-            } catch (...) {
-                logger::error("Error running console command {}", messageText);
-            }
+            RunConsoleCommand(messageText);
         });
         _webSocketServer.set_access_channels(websocketpp::log::alevel::all);
         _webSocketServer.init_asio();
