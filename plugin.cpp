@@ -23,6 +23,8 @@ void RunWebSocketServer() {
         _webSocketServer.set_message_handler([](websocketpp::connection_hdl connection, WebSocketMessagePtr message) {
             auto messageText = message->get_payload();
             logger::info("WebSocket message '{}'", messageText);
+            // Want to reply to the caller?
+            // <server>.send(<incoming connection>, <message>, <type>)
             _webSocketServer.send(connection, std::format("Running command '{}'", messageText),
                                   websocketpp::frame::opcode::text);
             RunConsoleCommand(messageText);
